@@ -3,9 +3,11 @@ Simple graph implementation
 """
 from util import Stack, Queue  # These may come in handy
 
+
 class Graph:
 
     """Represent a graph as a dictionary of vertices mapping labels to edges."""
+
     def __init__(self):
         self.vertices = {}
 
@@ -100,7 +102,7 @@ class Graph:
         print(starting_vertex)
         visited.add(starting_vertex)
 
-            # Call DFT_Recursive on each child
+        # Call DFT_Recursive on each child
         for child_vertex in self.vertices[starting_vertex]:
             if child_vertex not in visited:
                 self.dft_recursive(child_vertex, visited)
@@ -127,13 +129,13 @@ class Graph:
             # CHECK IF IT'S THE TARGET
             if vertex not in visited:
                 # IF SO, RETURN THE PATH
-            # Check if it's been visited
-            # If it has not been visited...
+                # Check if it's been visited
+                # If it has not been visited...
                 # Mark it as visited
                 # Then add A PATH TO all neighbors to the back of the queue
                     # (Make a copy of the path before adding)
                 if vertex == destination_vertex:
-                    return path 
+                    return path
                 visited.add(vertex)
                 for next_vert in self.vertices[vertex]:
                     # create a new list and not just a reference or shallow copy
@@ -147,9 +149,34 @@ class Graph:
         starting_vertex to destination_vertex in
         depth-first order.
         """
-        pass  # TODO
+        s = Stack()
+        s.push([starting_vertex])
+        visited = set()
+        counter = 0
+        while s.size() > 0:
+            counter += 1
+            print(counter)
+            # Pop, the first PATH
+            path = s.pop()
+            # GRAB THE LAST VERTEX FROM THE PATH
+            v = path[-1]
+            # CHECK IF IT'S THE TARGET
+            if v == destination_vertex:
+                # IF SO, RETURN THE PATH
+                return path
+            # Check if it's been visited
+            # If it has not been visited...
+            if v not in visited:
+                # Mark it as visited
+                visited.add(v)
+                # Then add A PATH TO all neighbors to the top of the stack
+                for neighbor in self.get_neighbors(v):
+                    # (Make a copy of the path before adding)
+                    path_copy = path.copy()
+                    path_copy.append(neighbor)
+                    s.push(path_copy)
 
-    def dfs_recursive(self, starting_vertex):
+    def dfs_recursive(self, starting_vertex, destination_vertex, visited=None, path=None):
         """
         Return a list containing a path from
         starting_vertex to destination_vertex in
@@ -157,7 +184,28 @@ class Graph:
 
         This should be done using recursion.
         """
-        pass  # TODO
+        # initialize visited if it's not yet initialized
+        if visited is None:
+            visited = set()
+        # initialize path if it's not yet initialized
+        if path is None:
+            path = []
+        # Check if starting vertex has been visited
+        # If not...
+        if starting_vertex not in visited:
+            # Mark it as visited, add it to the path
+            visited.add(starting_vertex)
+            path_copy = path.copy()
+            path_copy.append(starting_vertex)
+            # If starting_vertex is destination:
+            if starting_vertex == destination_vertex:
+                return path_copy
+            # Call DFS recursive on each neighbor
+            for neighbor in self.get_neighbors(starting_vertex):
+                new_path = self.dfs_recursive(
+                    neighbor, destination_vertex, visited, path_copy)
+                if new_path is not None:
+                    return new_path
 
 if __name__ == '__main__':
     graph = Graph()  # Instantiate your graph
@@ -231,4 +279,4 @@ if __name__ == '__main__':
     print("starting DFS")
     print(graph.dfs(1, 6))
     print("starting recursive DFS")
-    # print(graph.dfs_recursive(1, 6))
+    print(graph.dfs_recursive(1, 6))
